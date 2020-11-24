@@ -19,12 +19,6 @@
 
 using namespace clas12;
 
-void SetLorentzVector(TLorentzVector &p4,clas12::region_part_ptr rp){
-  p4.SetXYZM(rp->par()->getPx(),rp->par()->getPy(),
-	      rp->par()->getPz(),p4.M());
-}
-
-
 void eppi0_sim(){
   // Record start time
    
@@ -51,25 +45,18 @@ TLorentzVector prmc;
 TLorentzVector qmc;
 TLorentzVector Wmc;
 
-auto* hQ2W=new TH2F("hQ2W","hQ2W",100,1,3.5, 100, 0.8, 8); //Объявление гистограммы
-auto* hQ2Wgen=new TH2F("hQ2Wgen","hQ2Wgen",100,1,3.5, 100, 0.8, 8);
-
-   gBenchmark->Start("timer");
-   int counter=0;
-
-////////////////////////////////////////////////////////////////////////////////////////////
+gBenchmark->Start("timer");
+int counter=0;
 
 std::ofstream out;
-out.open("/home/golodovka/Programm/Clas12Tool/RunRoot/1pack/result_txt.txt");
+out.open("/home/golodovka/Programm/Clas12Tool/RunRoot/1pack/result.txt");
 vector<int> result; 
-
-///////////////////////////////////////////////////////////////////////////////////////////
 
 auto start = std::chrono::high_resolution_clock::now();
 
 gBenchmark->Start("timer");
   
-std::cout << " reading file example program (HIPO) "  << __cplusplus << std::endl;
+std::cout << " reading file example program (HIPO) " << std::endl;
 
 vector<string> data;	
 
@@ -185,16 +172,11 @@ pi0 = g1+g2;
 missPi0 = beam+target-el-pr;
 angle_g1_g2=g1.Angle(g2.Vect())*180.0/TMath::Pi(); 
 }
-///////////////////////////////////////Заполнение гистограмм для генерированных событий////////////////////////////////////////////////////////////////////////////////////////////////
-
-hQ2Wgen->Fill(Wmc.M(),-qmc.M2());
 
 //////////////////////////////////////////////////////////CUTS///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 if(electron.size()==1 && proton.size()==1 && gamma.size()>1 && W.M()>1.07 && el.E()>1.0 && g1.Angle(el.Vect())*180.0/TMath::Pi()>7 && g2.Angle(el.Vect())*180.0/TMath::Pi()>7 &&
 g1.Theta()*180.0/TMath::Pi()>5 && g2.Theta()*180.0/TMath::Pi()>5 && pi0.M()>0.05 && pi0.M()<0.35 && angle_g1_g2>8 && pi0.E()-(beam+target-el-pr).E()>-0.35 && pi0.E()-(beam+target-el-pr).E()<0.35 && pi0.Angle((beam+target-el-pr).Vect())*180.0/TMath::Pi()<15){
-////////////////////////////////////////////////////Заполнение гистограмм////////////////////////////////////////////////////////////////////////////////////////////////
-
-hQ2W->Fill(W.M(),-q.M2());
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 
@@ -205,10 +187,8 @@ if(abs(g1mc.E() - g1.E())<0.1 && abs(g2mc.E() - g2.E())<0.1)
 {
   result.push_back(1);
 } else{
-        result.push_back(0);
+        result.push_back(0);  
       }
-
-std::cout << result.size() << std::endl;
 
 if (out.is_open())
     {   
@@ -216,31 +196,14 @@ if (out.is_open())
     } 
 
 ///////////////////////////////////////////////////////////////////////
-
-
-
 }}
 
+gBenchmark->Stop("timer");
+gBenchmark->Print("timer");
 
- TCanvas* can = new TCanvas();
-  can->Divide(2,1);
-  can->cd(1);   
-  hQ2Wgen->SetTitle("Q^{2} vs. W distribution (generated); W, GeV; Q^{2}, GeV^{2}");
-  hQ2Wgen->Draw("colz");    
+auto finish = std::chrono::high_resolution_clock::now();
+std::chrono::duration<double> elapsed = finish - start;
+std::cout << "Elapsed time: " << elapsed.count()<< " events = "<<counter<< " s\n";
 
-  can->cd(2);   
-  hQ2W->SetTitle("Q^{2} vs. W distribution ; W, GeV; Q^{2}, GeV^{2}");
-  hQ2W->Draw("colz");    
-
-   gBenchmark->Stop("timer");
-   gBenchmark->Print("timer");
- 
-   auto finish = std::chrono::high_resolution_clock::now();
-   std::chrono::duration<double> elapsed = finish - start;
-   std::cout << "Elapsed time: " << elapsed.count()<< " events = "<<counter<< " s\n";
-
-
-/////////////////
-/////////////////
 out.close();
 }
