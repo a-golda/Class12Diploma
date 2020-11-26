@@ -101,11 +101,11 @@ for(int r=0;r<data.size();r++)
     vector<int> gamma;
     vector<int> electron;
 
-    TLorentzVector Egamtest1(0,0,0,0);  //некие вспомогательные вектора, с помощью которых я сравниваю
-    TLorentzVector Egamtest2(0,0,0,0);
-    int Numgammax1=-10;
-    int Numgammax2=-10;
-    float MaxEpi0=0;
+    // TLorentzVector Egamtest1(0,0,0,0);  //некие вспомогательные вектора, с помощью которых я сравниваю
+    // TLorentzVector Egamtest2(0,0,0,0);
+    // int Numgammax1=-10;
+    // int Numgammax2=-10;
+    // float MaxEpi0=0;
 
     int secte=-10;  //переменные для сравнивания секторов, в которых регистрировались частицы
     int sectp=-10;
@@ -152,48 +152,77 @@ for(int r=0;r<data.size();r++)
       if(pid==22) gamma.push_back(i);
     }					
 
-    if(electron.size()==1 && proton.size()==1 && gamma.size()>=2)
-    {                       //two gamma selection
-      pr.SetXYZM(PART.getFloat("px",proton[0]),PART.getFloat("py",proton[0]),PART.getFloat("pz",proton[0]),0.938);
-      for(int k=0; k<gamma.size(); k++)
-      {                                                 //выбор пары гамма-квантов с максимальной энергией
-        Egamtest1.SetXYZM(PART.getFloat("px",gamma[k]),PART.getFloat("py",gamma[k]),PART.getFloat("pz",gamma[k]),0);
-        if(Egamtest1.E()<0) continue;
-        for(int j=k+1; j<gamma.size(); j++)
-        {
-          Egamtest2.SetXYZM(PART.getFloat("px",gamma[j]),PART.getFloat("py",gamma[j]),PART.getFloat("pz",gamma[j]),0);
-          if(Egamtest2.E()<0) continue;
-          if(MaxEpi0<Egamtest1.E()+Egamtest2.E()) 
-          {
-            Numgammax1=k; Numgammax2=j; MaxEpi0=Egamtest1.E()+Egamtest2.E();
-          }
-        }
-      }
-      if(Numgammax1==-10 || Numgammax2==-10) continue;
+    // if(electron.size()==1 && proton.size()==1 && gamma.size()>=2)
+    // {                       //two gamma selection
+    //   pr.SetXYZM(PART.getFloat("px",proton[0]),PART.getFloat("py",proton[0]),PART.getFloat("pz",proton[0]),0.938);
 
-      g1.SetXYZM(PART.getFloat("px",gamma[Numgammax1]),PART.getFloat("py",gamma[Numgammax1]),PART.getFloat("pz",gamma[Numgammax1]),0);
-      g2.SetXYZM(PART.getFloat("px",gamma[Numgammax2]),PART.getFloat("py",gamma[Numgammax2]),PART.getFloat("pz",gamma[Numgammax2]),0);
-      if(g2.E()<g1.E()) 
-      {
-        g1.SetXYZM(PART.getFloat("px",gamma[Numgammax2]),PART.getFloat("py",gamma[Numgammax2]),PART.getFloat("pz",gamma[Numgammax2]),0);
-        g2.SetXYZM(PART.getFloat("px",gamma[Numgammax1]),PART.getFloat("py",gamma[Numgammax1]),PART.getFloat("pz",gamma[Numgammax1]),0);
-      }
-      pi0 = g1+g2;
-      missPi0 = beam+target-el-pr;
-      angle_g1_g2=g1.Angle(g2.Vect())*180.0/TMath::Pi(); 
+    //   for(int k=0; k<gamma.size(); k++)
+    //   {                                                 //выбор пары гамма-квантов с максимальной энергией
+    //     Egamtest1.SetXYZM(PART.getFloat("px",gamma[k]),PART.getFloat("py",gamma[k]),PART.getFloat("pz",gamma[k]),0);
+    //     if(Egamtest1.E()<0) continue;
+    //     for(int j=k+1; j<gamma.size(); j++)
+    //     {
+    //       Egamtest2.SetXYZM(PART.getFloat("px",gamma[j]),PART.getFloat("py",gamma[j]),PART.getFloat("pz",gamma[j]),0);
+    //       if(Egamtest2.E()<0) continue;
+    //       if(MaxEpi0<Egamtest1.E()+Egamtest2.E()) 
+    //       {
+    //         Numgammax1=k; Numgammax2=you need use the git reset --mixedj; MaxEpi0=Egamtest1.E()+Egamtest2.E();
+    //       }
+    //     }
+    //   }
+    //   if(Numgammax1==-10 || Numgammax2==-10) continue;
+
+    //   g1.SetXYZM(PART.getFloat("px",gamma[Numgammax1]),PART.getFloat("py",gamma[Numgammax1]),PART.getFloat("pz",gamma[Numgammax1]),0);
+    //   g2.SetXYZM(PART.getFloat("px",gamma[Numgammax2]),PART.getFloat("py",gamma[Numgammax2]),PART.getFloat("pz",gamma[Numgammax2]),0);
+    //   if(g2.E()<g1.E()) 
+    //   {
+    //     g1.SetXYZM(PART.getFloat("px",gamma[Numgammax2]),PART.getFloat("py",gamma[Numgammax2]),PART.getFloat("pz",gamma[Numgammax2]),0);
+    //     g2.SetXYZM(PART.getFloat("px",gamma[Numgammax1]),PART.getFloat("py",gamma[Numgammax1]),PART.getFloat("pz",gamma[Numgammax1]),0);
+    //   }
+    //   pi0 = g1+g2;
+    //   missPi0 = beam+target-el-pr;
+    //   angle_g1_g2=g1.Angle(g2.Vect())*180.0/TMath::Pi(); 
+    // }
+
+    TLorentzVector Egamtest1(0,0,0,0);  //некие вспомогательные вектора, с помощью которых я сравниваю
+    vector<float> g1mc_simi; 
+    vector<float> g2mc_simi;
+    
+    for(int k=0; k<gamma.size(); k++)
+    { 
+      Egamtest1.SetXYZM(PART.getFloat("px",gamma[k]),PART.getFloat("py",gamma[k]),PART.getFloat("pz",gamma[k]),0);
+      g1mc_simi.push_back(abs(Egamtest1.E()-g1mc.E())/g1mc.E());
+      g2mc_simi.push_back(abs(Egamtest1.E()-g2mc.E())/g2mc.E());
     }
 
-    if(abs(g1mc.E() - g1.E())<0.1 && abs(g2mc.E() - g2.E())<0.1)
-    {
-      result.push_back(1);
-    } else{
-            result.push_back(0);  
-          }
-    if (out.is_open())
-      {   
-        out<< g1mc.E()<<','<< g2mc.E()<< ',' << result[result.size() - 1] << std::endl;
-      } 
+    out<< g1mc_simi.size()<< "," <<g2mc_simi.size() << std::endl;
 
+    // if g1mc_simi.size() != 0
+    // {
+
+    // }
+    // for (int i = 0; i < ; i++)
+    // {
+    //     if (words[i] == contra)
+    //     {
+    //         result = i;
+    //         break;
+    //     }
+    // }
+
+    // [0.1,0.2,0.3] g1mc g2mc
+    // [0.2,0.4,0.1] g1 g2 g3 g4 ..... 
+
+    // if(abs(g1mc.E() - g1.E())<0.1 && abs(g2mc.E() - g2.E())<0.1)
+    // {
+    //   result.push_back(1);
+    // } else{
+    //         result.push_back(0);  
+    //       }
+    // if (out.is_open())
+    //   {   
+    //     out<< g1mc.E()<<','<< g2mc.E()<< ',' << result[result.size() - 1] << std::endl;
+    //   } 
     } 
   }
 
