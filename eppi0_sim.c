@@ -200,4 +200,5 @@ for(int r=0;r<data.size();r++)
   std::cout << "Elapsed time: " << elapsed.count()<< " events = "<<counter<< " s\n";
 
   out.close();
+  /// s gitom vse okey
 }
