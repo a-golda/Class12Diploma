@@ -132,7 +132,6 @@ for(int r=0;r<data.size();r++)
     }
     pi0mc=g1mc+g2mc;
 
-
     //reconstructed events
     el.SetXYZM(PART.getFloat("px",0),PART.getFloat("py",0),PART.getFloat("pz",0),0);
     q=beam-el;
