@@ -101,17 +101,9 @@ for(int r=0;r<data.size();r++)
     vector<int> gamma;
     vector<int> electron;
 
-    // TLorentzVector Egamtest1(0,0,0,0);  //некие вспомогательные вектора, с помощью которых я сравниваю
-    // TLorentzVector Egamtest2(0,0,0,0);
-    // int Numgammax1=-10;
-    // int Numgammax2=-10;
-    // float MaxEpi0=0;
-
     int secte=-10;  //переменные для сравнивания секторов, в которых регистрировались частицы
     int sectp=-10;
     int sectg=-10;
-
-
 
     //generated events
     elmc.SetXYZM(PARTMC.getFloat("px",0),PARTMC.getFloat("py",0),PARTMC.getFloat("pz",0),0);
@@ -133,7 +125,11 @@ for(int r=0;r<data.size();r++)
       }
     }
 
-    if(g2mc.E()<g1mc.E()){gbigmc=g1mc; g1mc=g2mc; g2mc=gbigmc;}
+    if(g2mc.E()<g1mc.E())
+    { gbigmc=g1mc; 
+      g1mc=g2mc; 
+      g2mc=gbigmc;
+    }
     pi0mc=g1mc+g2mc;
 
 
@@ -144,58 +140,29 @@ for(int r=0;r<data.size();r++)
 
     //заполнение векторов с номерами частиц
 
-    for (int i = 0; i < nrows; i++) //без отбора событий, где протон, электрон и гаммы регистрируются в одном секторе
+    for (int i = 0; i < nrows; i++)
     {
       int pid = PART.getInt("pid",i);
       if(pid==11) electron.push_back(i);
       if(pid==2212) proton.push_back(i);
       if(pid==22) gamma.push_back(i);
-    }					
-
-    // if(electron.size()==1 && proton.size()==1 && gamma.size()>=2)
-    // {                       //two gamma selection
-    //   pr.SetXYZM(PART.getFloat("px",proton[0]),PART.getFloat("py",proton[0]),PART.getFloat("pz",proton[0]),0.938);
-
-    //   for(int k=0; k<gamma.size(); k++)
-    //   {                                                 //выбор пары гамма-квантов с максимальной энергией
-    //     Egamtest1.SetXYZM(PART.getFloat("px",gamma[k]),PART.getFloat("py",gamma[k]),PART.getFloat("pz",gamma[k]),0);
-    //     if(Egamtest1.E()<0) continue;
-    //     for(int j=k+1; j<gamma.size(); j++)
-    //     {
-    //       Egamtest2.SetXYZM(PART.getFloat("px",gamma[j]),PART.getFloat("py",gamma[j]),PART.getFloat("pz",gamma[j]),0);
-    //       if(Egamtest2.E()<0) continue;
-    //       if(MaxEpi0<Egamtest1.E()+Egamtest2.E()) 
-    //       {
-    //         Numgammax1=k; Numgammax2=you need use the git reset --mixedj; MaxEpi0=Egamtest1.E()+Egamtest2.E();
-    //       }
-    //     }
-    //   }
-    //   if(Numgammax1==-10 || Numgammax2==-10) continue;
-
-    //   g1.SetXYZM(PART.getFloat("px",gamma[Numgammax1]),PART.getFloat("py",gamma[Numgammax1]),PART.getFloat("pz",gamma[Numgammax1]),0);
-    //   g2.SetXYZM(PART.getFloat("px",gamma[Numgammax2]),PART.getFloat("py",gamma[Numgammax2]),PART.getFloat("pz",gamma[Numgammax2]),0);
-    //   if(g2.E()<g1.E()) 
-    //   {
-    //     g1.SetXYZM(PART.getFloat("px",gamma[Numgammax2]),PART.getFloat("py",gamma[Numgammax2]),PART.getFloat("pz",gamma[Numgammax2]),0);
-    //     g2.SetXYZM(PART.getFloat("px",gamma[Numgammax1]),PART.getFloat("py",gamma[Numgammax1]),PART.getFloat("pz",gamma[Numgammax1]),0);
-    //   }
-    //   pi0 = g1+g2;
-    //   missPi0 = beam+target-el-pr;
-    //   angle_g1_g2=g1.Angle(g2.Vect())*180.0/TMath::Pi(); 
-    // }
+    } 
 
     TLorentzVector Egamtest1(0,0,0,0);  //некие вспомогательные вектора, с помощью которых я сравниваю
     vector<float> g1mc_simi; 
     vector<float> g2mc_simi;
     
-    for(int k=0; k<gamma.size(); k++)
-    { 
-      Egamtest1.SetXYZM(PART.getFloat("px",gamma[k]),PART.getFloat("py",gamma[k]),PART.getFloat("pz",gamma[k]),0);
-      g1mc_simi.push_back(abs(Egamtest1.E()-g1mc.E())/g1mc.E());
-      g2mc_simi.push_back(abs(Egamtest1.E()-g2mc.E())/g2mc.E());
+    if(electron.size()==1 && proton.size()==1 && gamma.size()>2)
+    {
+      for(int k=0; k<gamma.size(); k++)
+      { 
+        Egamtest1.SetXYZM(PART.getFloat("px",gamma[k]),PART.getFloat("py",gamma[k]),PART.getFloat("pz",gamma[k]),0);
+        g1mc_simi.push_back(abs(Egamtest1.E()-g1mc.E())/g1mc.E());
+        g2mc_simi.push_back(abs(Egamtest1.E()-g2mc.E())/g2mc.E());
+      }
     }
 
-    out<< g1mc_simi.size()<< "," <<g2mc_simi.size() << std::endl;
+    out<< g1mc_simi.size() << std::endl;
 
     // if g1mc_simi.size() != 0
     // {
@@ -223,8 +190,8 @@ for(int r=0;r<data.size();r++)
     //   {   
     //     out<< g1mc.E()<<','<< g2mc.E()<< ',' << result[result.size() - 1] << std::endl;
     //   } 
-    } 
-  }
+  } 
+}
 
   gBenchmark->Stop("timer");
   gBenchmark->Print("timer");
