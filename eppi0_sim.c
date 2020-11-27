@@ -151,7 +151,7 @@ for(int r=0;r<data.size();r++)
     vector<float> g1mc_simi; 
     vector<float> g2mc_simi;
     
-    if(electron.size()==1 && proton.size()==1 && gamma.size()>2)
+    if(electron.size()==1 && proton.size()==1 && gamma.size()>=2)
     {
       for(int k=0; k<gamma.size(); k++)
       { 
@@ -200,5 +200,5 @@ for(int r=0;r<data.size();r++)
   std::cout << "Elapsed time: " << elapsed.count()<< " events = "<<counter<< " s\n";
 
   out.close();
-  /// s gitom vse okey
+  /// s gitom vse okey i prom
 }
