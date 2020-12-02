@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <cmath>
 #include <iostream>
 #include <fstream>
 #include <chrono>
@@ -150,22 +151,44 @@ for(int r=0;r<data.size();r++)
     TLorentzVector Egamtest1(0,0,0,0);  //некие вспомогательные вектора, с помощью которых я сравниваю
     vector<float> g1mc_simi; 
     vector<float> g2mc_simi;
+    float perc = 0.1;
     
-    if(electron.size()==1 && proton.size()==1 && gamma.size()>=2)
+    if(electron.size()==1 && proton.size()==1 && gamma.size()>=1)
     {
       for(int k=0; k<gamma.size(); k++)
       { 
         Egamtest1.SetXYZM(PART.getFloat("px",gamma[k]),PART.getFloat("py",gamma[k]),PART.getFloat("pz",gamma[k]),0);
-        g1mc_simi.push_back(abs(Egamtest1.E()-g1mc.E())/g1mc.E());
-        g2mc_simi.push_back(abs(Egamtest1.E()-g2mc.E())/g2mc.E());
+        if (((abs(Egamtest1.E()-g1mc.E())/g1mc.E()) < perc))
+        {
+          g1mc_simi.push_back(k);
+        } else {}
+        if ((abs(Egamtest1.E()-g2mc.E())/g2mc.E()) < perc)
+        {
+          g2mc_simi.push_back(k);
+        } else {}
       }
-    }
+    } else {}
 
-    out<< g1mc_simi.size() << std::endl;
+    if(g1mc_simi.size()!=0)
+    {
+      for(int m=0; m<g1mc_simi.size(); m++)
+      {
+        out<<g1mc.Theta()<<','<<g2mc.Phi()<<std::endl;
+        out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])<< ',' << std::endl;
+      }
+    } else {}
 
+    if(g2mc_simi.size()!=0)
+    { 
+      for(int l=0; l<g2mc_simi.size(); l++)
+      {
+        out<< PART.getFloat("px",gamma[l]) << ',' << PART.getFloat("py",gamma[l])<< ',' << PART.getFloat("pz",gamma[l])<< ',' << std::endl;
+      }
+    } else {}
+
+    
     // if g1mc_simi.size() != 0
     // {
-
     // }
     // for (int i = 0; i < ; i++)
     // {
