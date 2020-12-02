@@ -158,11 +158,11 @@ for(int r=0;r<data.size();r++)
       for(int k=0; k<gamma.size(); k++)
       { 
         Egamtest1.SetXYZM(PART.getFloat("px",gamma[k]),PART.getFloat("py",gamma[k]),PART.getFloat("pz",gamma[k]),0);
-        if (((abs(Egamtest1.E()-g1mc.E())/g1mc.E()) < perc) && (Egamtest1.Theta()<0.1))
+        if (((abs(Egamtest1.E()-g1mc.E())/g1mc.E()) < perc) && (abs(Egamtest1.Theta()-g1mc.Theta())<0.314) && (abs(Egamtest1.Phi()-g1mc.Phi())<0.314))
         {
           g1mc_simi.push_back(k);
         } else {}
-        if ((abs(Egamtest1.E()-g2mc.E())/g2mc.E()) < perc)
+        if ((abs(Egamtest1.E()-g2mc.E())/g2mc.E()) < perc && (abs(Egamtest1.Theta()-g2mc.Theta())<0.314) && (abs(Egamtest1.Phi()-g2mc.Phi())<0.314))
         {
           g2mc_simi.push_back(k);
         } else {}
@@ -173,8 +173,7 @@ for(int r=0;r<data.size();r++)
     {
       for(int m=0; m<g1mc_simi.size(); m++)
       {
-        out<<g1mc.Theta()<<','<<g2mc.Phi()<<std::endl;
-        out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])<< ',' << std::endl;
+        out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << std::endl;
       }
     } else {}
 
@@ -182,7 +181,7 @@ for(int r=0;r<data.size();r++)
     { 
       for(int l=0; l<g2mc_simi.size(); l++)
       {
-        out<< PART.getFloat("px",gamma[l]) << ',' << PART.getFloat("py",gamma[l])<< ',' << PART.getFloat("pz",gamma[l])<< ',' << std::endl;
+        out<< PART.getFloat("px",gamma[l]) << ',' << PART.getFloat("py",gamma[l])<< ',' << PART.getFloat("pz",gamma[l]) << std::endl;
       }
     } else {}
 
