@@ -148,7 +148,9 @@ for(int r=0;r<data.size();r++)
       if(pid==22) gamma.push_back(i);
     } 
 
-    TLorentzVector Egamtest1(0,0,0,0);  //некие вспомогательные вектора, с помощью которых я сравниваю
+    TLorentzVector Egamtest1(0,0,0,0);
+    TLorentzVector Temp1(0,0,0,0); 
+    TLorentzVector Temp2(0,0,0,0); //некие вспомогательные вектора, с помощью которых я сравниваю
     vector<float> g1mc_simi; 
     vector<float> g2mc_simi;
     float perc = 0.1;
@@ -173,7 +175,8 @@ for(int r=0;r<data.size();r++)
     {
       for(int m=0; m<g1mc_simi.size(); m++)
       {
-        out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << std::endl;
+        Temp1.SetXYZM(PART.getFloat("px",gamma[m]),PART.getFloat("py",gamma[m]),PART.getFloat("pz",gamma[m]),0);
+        out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<std::endl;
       }
     } else {}
 
@@ -181,7 +184,8 @@ for(int r=0;r<data.size();r++)
     { 
       for(int l=0; l<g2mc_simi.size(); l++)
       {
-        out<< PART.getFloat("px",gamma[l]) << ',' << PART.getFloat("py",gamma[l])<< ',' << PART.getFloat("pz",gamma[l]) << std::endl;
+        Temp2.SetXYZM(PART.getFloat("px",gamma[l]),PART.getFloat("py",gamma[l]),PART.getFloat("pz",gamma[l]),0);
+        out<< PART.getFloat("px",gamma[l]) << ',' << PART.getFloat("py",gamma[l])<< ',' << PART.getFloat("pz",gamma[l])  << ',' << Temp2.E() << ',' << Temp2.Theta()<< ','<< Temp2.Phi()<<std::endl;
       }
     } else {}
 
