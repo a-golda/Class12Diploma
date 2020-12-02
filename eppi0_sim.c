@@ -188,33 +188,6 @@ for(int r=0;r<data.size();r++)
         out<< PART.getFloat("px",gamma[l]) << ',' << PART.getFloat("py",gamma[l])<< ',' << PART.getFloat("pz",gamma[l])  << ',' << Temp2.E() << ',' << Temp2.Theta()<< ','<< Temp2.Phi()<<std::endl;
       }
     } else {}
-
-    
-    // if g1mc_simi.size() != 0
-    // {
-    // }
-    // for (int i = 0; i < ; i++)
-    // {
-    //     if (words[i] == contra)
-    //     {
-    //         result = i;
-    //         break;
-    //     }
-    // }
-
-    // [0.1,0.2,0.3] g1mc g2mc
-    // [0.2,0.4,0.1] g1 g2 g3 g4 ..... 
-
-    // if(abs(g1mc.E() - g1.E())<0.1 && abs(g2mc.E() - g2.E())<0.1)
-    // {
-    //   result.push_back(1);
-    // } else{
-    //         result.push_back(0);  
-    //       }
-    // if (out.is_open())
-    //   {   
-    //     out<< g1mc.E()<<','<< g2mc.E()<< ',' << result[result.size() - 1] << std::endl;
-    //   } 
   } 
 }
 
@@ -226,5 +199,4 @@ for(int r=0;r<data.size();r++)
   std::cout << "Elapsed time: " << elapsed.count()<< " events = "<<counter<< " s\n";
 
   out.close();
-  /// s gitom vse okey i prom
 }
