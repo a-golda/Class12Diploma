@@ -158,7 +158,7 @@ for(int r=0;r<data.size();r++)
       for(int k=0; k<gamma.size(); k++)
       { 
         Egamtest1.SetXYZM(PART.getFloat("px",gamma[k]),PART.getFloat("py",gamma[k]),PART.getFloat("pz",gamma[k]),0);
-        if (((abs(Egamtest1.E()-g1mc.E())/g1mc.E()) < perc))
+        if (((abs(Egamtest1.E()-g1mc.E())/g1mc.E()) < perc) && (Egamtest1.Theta()<0.1))
         {
           g1mc_simi.push_back(k);
         } else {}
