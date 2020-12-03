@@ -16,6 +16,7 @@
 #include <TChain.h>
 #include <TCanvas.h>
 #include <TBenchmark.h>
+#include <algorithm>
 #include "clas12reader.h"
 
 using namespace clas12;
@@ -166,26 +167,24 @@ for(int r=0;r<data.size();r++)
         } else {}
         if ((abs(Egamtest1.E()-g2mc.E())/g2mc.E()) < perc && (abs(Egamtest1.Theta()-g2mc.Theta())<0.314) && (abs(Egamtest1.Phi()-g2mc.Phi())<0.314))
         {
-          g2mc_simi.push_back(k);
+          g1mc_simi.push_back(k);
         } else {}
       }
     } else {}
 
     if(g1mc_simi.size()!=0)
     {
-      for(int m=0; m<g1mc_simi.size(); m++)
+      for(int m=0; m<gamma.size(); m++)
       {
         Temp1.SetXYZM(PART.getFloat("px",gamma[m]),PART.getFloat("py",gamma[m]),PART.getFloat("pz",gamma[m]),0);
-        out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<std::endl;
-      }
-    } else {}
-
-    if(g2mc_simi.size()!=0)
-    { 
-      for(int l=0; l<g2mc_simi.size(); l++)
-      {
-        Temp2.SetXYZM(PART.getFloat("px",gamma[l]),PART.getFloat("py",gamma[l]),PART.getFloat("pz",gamma[l]),0);
-        out<< PART.getFloat("px",gamma[l]) << ',' << PART.getFloat("py",gamma[l])<< ',' << PART.getFloat("pz",gamma[l])  << ',' << Temp2.E() << ',' << Temp2.Theta()<< ','<< Temp2.Phi()<<std::endl;
+        if(std::find(g1mc_simi.begin(), g1mc_simi.end(), m) != g1mc_simi.end()) // like 'in' func
+        {
+        out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<<'1'<<std::endl;
+        }
+        else
+        {
+          out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<<'0'<<std::endl;
+        }
       }
     } else {}
   } 
