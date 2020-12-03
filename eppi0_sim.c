@@ -172,21 +172,18 @@ for(int r=0;r<data.size();r++)
       }
     } else {}
 
-    if(g1mc_simi.size()!=0)
+    for(int m=0; m<gamma.size(); m++)
     {
-      for(int m=0; m<gamma.size(); m++)
+      Temp1.SetXYZM(PART.getFloat("px",gamma[m]),PART.getFloat("py",gamma[m]),PART.getFloat("pz",gamma[m]),0);
+      if(std::find(g1mc_simi.begin(), g1mc_simi.end(), m) != g1mc_simi.end()) // like 'in' func
       {
-        Temp1.SetXYZM(PART.getFloat("px",gamma[m]),PART.getFloat("py",gamma[m]),PART.getFloat("pz",gamma[m]),0);
-        if(std::find(g1mc_simi.begin(), g1mc_simi.end(), m) != g1mc_simi.end()) // like 'in' func
-        {
-        out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<<'1'<<std::endl;
-        }
-        else
-        {
-          out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<<'0'<<std::endl;
-        }
+      out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<<'1'<<std::endl;
       }
-    } else {}
+      else
+      {
+        out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<<'0'<<std::endl;
+      }
+    }
   } 
 }
 
