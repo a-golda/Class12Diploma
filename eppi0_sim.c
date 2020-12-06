@@ -51,7 +51,10 @@ int counter=0;
 
 std::ofstream out;
 out.open("/home/golodovka/Programm/Clas12Tool/RunRoot/1pack/result.txt");
-vector<int> result; 
+vector<int> result;
+
+out<< "px" << ',' << "py" << ',' << "pz" << ',' << "E" << ',' << "Theta" << ',' << "Phi" << ',' << "E_e" 
+<<','<< "e_theta" <<',' << "e_phi"<< ','<< "E_p" <<','<< "p_theta" <<',' << "p_phi"<< ','<< "is_good" <<std::endl;
 
 auto start = std::chrono::high_resolution_clock::now();
 
@@ -158,14 +161,16 @@ for(int r=0;r<data.size();r++)
     
     if(electron.size()==1 && proton.size()==1 && gamma.size()>=1)
     {
+      pr.SetXYZM(PART.getFloat("px",proton[0]),PART.getFloat("py",proton[0]),PART.getFloat("pz",proton[0]),0.938);
+      
       for(int k=0; k<gamma.size(); k++)
       { 
         Egamtest1.SetXYZM(PART.getFloat("px",gamma[k]),PART.getFloat("py",gamma[k]),PART.getFloat("pz",gamma[k]),0);
-        if (((abs(Egamtest1.E()-g1mc.E())/g1mc.E()) < perc) && (abs(Egamtest1.Theta()-g1mc.Theta())<0.314) && (abs(Egamtest1.Phi()-g1mc.Phi())<0.314))
+        if (((abs(Egamtest1.E()-g1mc.E())/g1mc.E()) < perc) && (abs(Egamtest1.Theta()-g1mc.Theta())/g1mc.Theta()<perc) && (abs(Egamtest1.Phi()-g1mc.Phi())/g1mc.Phi()<perc))
         {
           g1mc_simi.push_back(k);
         } else {}
-        if ((abs(Egamtest1.E()-g2mc.E())/g2mc.E()) < perc && (abs(Egamtest1.Theta()-g2mc.Theta())<0.314) && (abs(Egamtest1.Phi()-g2mc.Phi())<0.314))
+        if ((abs(Egamtest1.E()-g2mc.E())/g2mc.E()) < perc && (abs(Egamtest1.Theta()-g2mc.Theta())/g2mc.Theta()<perc) && (abs(Egamtest1.Phi()-g2mc.Phi())/g2mc.Phi()<perc))
         {
           g1mc_simi.push_back(k);
         } else {}
@@ -176,11 +181,11 @@ for(int r=0;r<data.size();r++)
         Temp1.SetXYZM(PART.getFloat("px",gamma[m]),PART.getFloat("py",gamma[m]),PART.getFloat("pz",gamma[m]),0);
         if(std::find(g1mc_simi.begin(), g1mc_simi.end(), m) != g1mc_simi.end()) // like 'in' func
         {
-        out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<<'1'<<std::endl;
+          out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<< el.E() <<','<< el.Theta()<<',' << el.Phi()<<',' << pr.E() <<','<< pr.Theta()<<',' << pr.Phi() <<','<<'1'<<std::endl;
         }
         else
         {
-          out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<<'0'<<std::endl;
+          out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<< el.E() <<','<< el.Theta()<<',' << el.Phi()<<',' << pr.E() <<','<< pr.Theta()<<',' << pr.Phi() <<','<<'0'<<std::endl;
         }
       }
     } else {}
