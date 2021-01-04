@@ -54,7 +54,7 @@ out.open("/home/golodovka/Programm/Clas12Tool/RunRoot/1pack/result.txt");
 vector<int> result;
 
 out<< "px" << ',' << "py" << ',' << "pz" << ',' << "E" << ',' << "Theta" << ',' << "Phi" << ',' << "E_e" 
-<<','<< "e_theta" <<',' << "e_phi"<< ','<< "E_p" <<','<< "p_theta" <<',' << "p_phi"<< ','<< "is_good" <<std::endl;
+<<','<< "e_theta" <<',' << "e_phi"<< ','<< "E_p" <<','<< "p_theta" <<',' << "p_phi"<< ','<< "E_cal_max" << ',' << "E_cal_min" << ','<< "E_cal_sum" <<','<< "Cal_n" << ',' << "is_good" <<std::endl;
 
 auto start = std::chrono::high_resolution_clock::now();
 
@@ -65,15 +65,15 @@ std::cout << " reading file example program (HIPO) " << std::endl;
 vector<string> data;	
 
 data.push_back("out_out1.hipo");
-// data.push_back("out_out2.hipo");
-// data.push_back("out_out3.hipo");
-// data.push_back("out_out4.hipo");
-// data.push_back("out_out5.hipo");
-// data.push_back("out_out6.hipo");
-// data.push_back("out_out7.hipo");
-// data.push_back("out_out8.hipo");
-// data.push_back("out_out9.hipo");
-// data.push_back("out_out10.hipo");
+data.push_back("out_out2.hipo");
+data.push_back("out_out3.hipo");
+data.push_back("out_out4.hipo");
+data.push_back("out_out5.hipo");
+data.push_back("out_out6.hipo");
+data.push_back("out_out7.hipo");
+data.push_back("out_out8.hipo");
+data.push_back("out_out9.hipo");
+data.push_back("out_out10.hipo");
 
 for(int r=0;r<data.size();r++)
 { 
@@ -101,10 +101,16 @@ for(int r=0;r<data.size();r++)
 
     int nrows = PART.getRows();  // количество частиц в рассматриваемом событии
     int nrowsmc = PARTMC.getRows();
+    int nrowscal = ECAL.getRows();
 
     vector<int> proton;  //вектора с номерами, соответствующие каждому из типов частиц
     vector<int> gamma;
     vector<int> electron;
+
+    vector<int> proton_id; 
+    vector<int> gamma_id;
+    vector<int> electron_id;
+
 
     int secte=-10;  //переменные для сравнивания секторов, в которых регистрировались частицы
     int sectp=-10;
@@ -157,6 +163,8 @@ for(int r=0;r<data.size();r++)
     TLorentzVector Temp2(0,0,0,0); //некие вспомогательные вектора, с помощью которых я сравниваю
     vector<float> g1mc_simi; 
     vector<float> g2mc_simi;
+    vector<float> Cal_E;
+
     float perc = 0.1;
     
     if(electron.size()==1 && proton.size()==1 && gamma.size()>=1)
@@ -174,20 +182,40 @@ for(int r=0;r<data.size();r++)
         {
           g1mc_simi.push_back(k);
         } else {}
+
+        for(int r_cal=0; r_cal<nrowscal; r_cal++)
+        {
+          if (k==ECAL.getInt("pindex", r_cal))
+          {
+            Cal_E.push_back(ECAL.getFloat("energy", r_cal));
+          } else {}
+        }
+
       }
+      
 
       for(int m=0; m<gamma.size(); m++)
       {
+        int Cal_n = Cal_E.size();
+        float E_cal_max = *std::max_element(Cal_E.begin(), Cal_E.end());
+        float E_cal_min = *std::min_element(Cal_E.begin(), Cal_E.end());
+        float E_cal_sum = 0;
+        for (int s=0; s<Cal_E.size(); s++)
+        {
+          E_cal_sum+=Cal_E[s];
+        }
+
         Temp1.SetXYZM(PART.getFloat("px",gamma[m]),PART.getFloat("py",gamma[m]),PART.getFloat("pz",gamma[m]),0);
         if(std::find(g1mc_simi.begin(), g1mc_simi.end(), m) != g1mc_simi.end()) // like 'in' func
         {
-          out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<< el.E() <<','<< el.Theta()<<',' << el.Phi()<<',' << pr.E() <<','<< pr.Theta()<<',' << pr.Phi() <<','<<'1'<<std::endl;
+          out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<< el.E() <<','<< el.Theta()<<',' << el.Phi()<<',' << pr.E() <<','<< pr.Theta()<<',' << pr.Phi() <<','<< E_cal_max << ',' << E_cal_min << ','<< E_cal_sum <<','<< Cal_n << ',' <<'1'<<std::endl;
         }
         else
         {
-          out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<< el.E() <<','<< el.Theta()<<',' << el.Phi()<<',' << pr.E() <<','<< pr.Theta()<<',' << pr.Phi() <<','<<'0'<<std::endl;
+          out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<< el.E() <<','<< el.Theta()<<',' << el.Phi()<<',' << pr.E() <<','<< pr.Theta()<<',' << pr.Phi() <<','<< E_cal_max << ',' << E_cal_min << ','<< E_cal_sum <<','<< Cal_n << ',' << '0'<<std::endl;
         }
       }
+
     } else {}
   } 
 }
