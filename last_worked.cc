@@ -21,7 +21,7 @@
 
 using namespace clas12;
 
-void eppi0_sim()
+void last_worked()
 {  
 auto db=TDatabasePDG::Instance();
 
@@ -50,11 +50,10 @@ gBenchmark->Start("timer");
 int counter=0;
 
 std::ofstream out;
-out.open("/home/golodovka/Programm/Clas12Tool/RunRoot/1pack/result_20_01.txt");
+out.open("/home/golodovka/Programm/Clas12Tool/RunRoot/1pack/result_ex.txt");
 vector<int> result;
 
-out<< "px" << ',' << "py" << ',' << "pz" << ',' << "E" << ',' << "Theta" << ',' << "Phi" << ',' << "E_e" 
-<<','<< "e_theta" <<',' << "e_phi"<< ','<< "E_p" <<','<< "p_theta" <<',' << "p_phi"<< ','<< "E_cal_max" << ',' << "E_cal_min" << ','<< "E_cal_sum" <<','<< "Cal_n" << ',' << "is_good" <<std::endl;
+out<< "px" << ',' << "py" << ',' << "pz" << ',' << "E" << ',' << "Theta" << ',' << "Phi" << ',' << "px_e" << ',' << "py_e" << ',' << "pz_e" << ',' << "E_e" <<','<< "e_theta" <<',' << "e_phi"<< ',' << "px_p" << ',' << "py_p" << ',' << "pz_p" << ','<< "E_p" <<','<< "p_theta" <<',' << "p_phi"<< ','<< "E_cal_max" << ',' << "E_cal_min" << ','<< "E_cal_sum" <<','<< "Cal_n" << ',' << "is_good" <<std::endl;
 
 auto start = std::chrono::high_resolution_clock::now();
 
@@ -64,7 +63,7 @@ std::cout << " reading file example program (HIPO) " << std::endl;
 
 vector<string> data;	
 
-data.push_back("big_real.hipo");
+data.push_back("out_out1.hipo");
 data.push_back("out_out2.hipo");
 data.push_back("out_out3.hipo");
 data.push_back("out_out4.hipo");
@@ -219,11 +218,11 @@ for(int r=0;r<data.size();r++)
         Temp1.SetXYZM(PART.getFloat("px",gamma[m]),PART.getFloat("py",gamma[m]),PART.getFloat("pz",gamma[m]),0);
         if(std::find(g1mc_simi.begin(), g1mc_simi.end(), m) != g1mc_simi.end()) // like 'in' func
         {
-          out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<< el.E() <<','<< el.Theta()<<',' << el.Phi()<<',' << pr.E() <<','<< pr.Theta()<<',' << pr.Phi() <<','<< E_cal_max << ',' << E_cal_min << ','<< E_cal_sum <<','<< Cal_n << ',' <<'1'<<std::endl;
+          out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ','<< PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<< PART.getFloat("px",electron[0]) << ',' << PART.getFloat("py",electron[0]) << ',' << PART.getFloat("pz",electron[0]) << ',' << el.E() <<','<< el.Theta()<< ',' << el.Phi()<< ',' << PART.getFloat("px",proton[0]) << ',' << PART.getFloat("py",proton[0]) << ',' << PART.getFloat("pz",proton[0]) << ','<< pr.E() <<','<< pr.Theta()<<',' << pr.Phi() <<','<< E_cal_max << ',' << E_cal_min << ','<< E_cal_sum <<','<< Cal_n << ',' <<'1'<<std::endl;
         }
         else
         {
-          out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<< el.E() <<','<< el.Theta()<<',' << el.Phi()<<',' << pr.E() <<','<< pr.Theta()<<',' << pr.Phi() <<','<< E_cal_max << ',' << E_cal_min << ','<< E_cal_sum <<','<< Cal_n << ',' << '0'<<std::endl;
+          out<< PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ','<< PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<< PART.getFloat("px",electron[0]) << ',' << PART.getFloat("py",electron[0]) << ',' << PART.getFloat("pz",electron[0]) << ',' << el.E() <<','<< el.Theta()<< ',' << el.Phi()<< ',' << PART.getFloat("px",proton[0]) << ',' << PART.getFloat("py",proton[0]) << ',' << PART.getFloat("pz",proton[0]) << ','<< pr.E() <<','<< pr.Theta()<<',' << pr.Phi() <<','<< E_cal_max << ',' << E_cal_min << ','<< E_cal_sum <<','<< Cal_n << ',' <<'0'<<std::endl;
         }
       }
 

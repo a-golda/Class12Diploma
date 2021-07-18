@@ -50,25 +50,34 @@ gBenchmark->Start("timer");
 int counter=0;
 
 std::ofstream out;
-out.open("/home/golodovka/Programm/Clas12Tool/RunRoot/1pack/test_big_hipo.txt");
+out.open("just_real_data_ex.txt");
 vector<int> result;
+vector<string> data;
 
-out<<"react_n" <<',' << "px" << ',' << "py" << ',' << "pz" << ',' << "E" << ',' << "Theta" << ',' << "Phi" << ',' << "E_e" 
-<<','<< "e_theta" <<',' << "e_phi"<< ','<< "E_p" <<','<< "p_theta" <<',' << "p_phi"<< ','<< "E_cal_max" << ',' << "E_cal_min" << ','<< "E_cal_sum" <<','<< "Cal_n" <<std::endl;
+out<<"react_n" <<','<< "px" << ',' << "py" << ',' << "pz" << ',' << "E" << ',' << "Theta" << ',' << "Phi" << ',' << "px_e" << ',' << "py_e" << ',' << "pz_e" << ',' << "E_e" <<','<< "e_theta" <<',' << "e_phi"<< ',' << "px_p" << ',' << "py_p" << ',' << "pz_p" << ','<< "E_p" <<','<< "p_theta" <<',' << "p_phi"<< ','<< "E_cal_max" << ',' << "E_cal_min" << ','<< "E_cal_sum" <<','<< "Cal_n" <<std::endl;
 
 auto start = std::chrono::high_resolution_clock::now();
 
 gBenchmark->Start("timer");
   
 std::cout << " reading file example program (HIPO) " << std::endl;
+	
+// std::ifstream file("out_ex.txt");
+// std::string str; 
+// while (std::getline(file, str))
+// {
+//   data.push_back(str);
+// }
+data.push_back("real1.hipo");
+data.push_back("real2.hipo");
+data.push_back("real3.hipo");
+data.push_back("real4.hipo");
+data.push_back("real5.hipo");
 
-vector<string> data;	
-
-data.push_back("big_real.hipo");
 
 for(int r=0;r<data.size();r++)
-{ 
-  hipo::reader  reader;
+{
+  hipo::reader reader;
   reader.open(data[r].c_str());
   hipo::dictionary factory;
   reader.readDictionary(factory);
@@ -79,7 +88,7 @@ for(int r=0;r<data.size();r++)
   hipo::bank ECAL(factory.getSchema("REC::Calorimeter"));
 
   while(reader.next()==true)
-  {
+  { 
     counter++;
     if (counter==1) continue;
     if (counter % 100000 == 0) cout<<counter<<"\n"; 
@@ -93,7 +102,7 @@ for(int r=0;r<data.size();r++)
     int nrowsmc = PARTMC.getRows();
     int nrowscal = ECAL.getRows();
 
-    vector<int> proton;  //вектора с номерами, соответствующие каждому из типов частиц
+    vector<int> proton; 
     vector<int> gamma;
     vector<int> electron;
     vector<int> proton_id; 
@@ -115,6 +124,8 @@ for(int r=0;r<data.size();r++)
     TLorentzVector Temp1(0,0,0,0); 
 
     vector<float> Cal_E;
+    float E_cal_max = 0;
+    float E_cal_min = 0;
 
     if(electron.size()==1 && proton.size()==1 && gamma.size()>1)
     {
@@ -122,6 +133,8 @@ for(int r=0;r<data.size();r++)
 
       for(int m=0; m<gamma.size(); m++)
       {
+
+        // out<<'1'<<std::endl;
         for(int r_cal=0; r_cal<nrowscal; r_cal++)
         {
           if (m==ECAL.getInt("pindex", r_cal))
@@ -129,9 +142,21 @@ for(int r=0;r<data.size();r++)
             Cal_E.push_back(ECAL.getFloat("energy", r_cal));
           } else {}
         }
+
         int Cal_n = Cal_E.size();
-        float E_cal_max = *std::max_element(Cal_E.begin(), Cal_E.end());
-        float E_cal_min = *std::min_element(Cal_E.begin(), Cal_E.end());
+
+        if (Cal_n>=2)
+        {
+          auto minmax_E = std::minmax_element(Cal_E.begin(), Cal_E.end());
+          E_cal_max = *minmax_E.second;
+          E_cal_min = *minmax_E.first;
+        } 
+        else if (Cal_n==0)
+        {
+          E_cal_max=0;
+          E_cal_min=0;
+        }else{E_cal_max=Cal_E[0]; E_cal_min=Cal_E[0];}
+        
         float E_cal_sum = 0;
         for (int s=0; s<Cal_E.size(); s++)
         {
@@ -140,7 +165,7 @@ for(int r=0;r<data.size();r++)
 
         Temp1.SetXYZM(PART.getFloat("px",gamma[m]),PART.getFloat("py",gamma[m]),PART.getFloat("pz",gamma[m]),0);
         {
-          out<< counter << ',' <<PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ',' << PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<< el.E() <<','<< el.Theta()<<',' << el.Phi()<<',' << pr.E() <<','<< pr.Theta()<<',' << pr.Phi() <<','<< E_cal_max << ',' << E_cal_min << ','<< E_cal_sum <<','<< Cal_n << std::endl;
+          out<< counter << ',' << PART.getFloat("px",gamma[m]) << ',' << PART.getFloat("py",gamma[m])<< ','<< PART.getFloat("pz",gamma[m])  << ',' << Temp1.E() << ',' << Temp1.Theta()<< ','<< Temp1.Phi()<<','<< PART.getFloat("px",electron[0]) << ',' << PART.getFloat("py",electron[0]) << ',' << PART.getFloat("pz",electron[0]) << ',' << el.E() <<','<< el.Theta()<< ',' << el.Phi()<< ',' << PART.getFloat("px",proton[0]) << ',' << PART.getFloat("py",proton[0]) << ',' << PART.getFloat("pz",proton[0]) << ','<< pr.E() <<','<< pr.Theta()<<',' << pr.Phi() <<','<< E_cal_max << ',' << E_cal_min << ','<< E_cal_sum <<','<< Cal_n << std::endl;
         }
       }
 
